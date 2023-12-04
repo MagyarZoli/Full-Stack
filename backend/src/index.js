@@ -3,11 +3,12 @@ import express from "express";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import passport from "passport";
+import cors from "cors";
 
-import "./src/config/passportConfig.js";
-import connectToDatabase from "./src/config/mongoConfig.js";
-import authRouter from "./src/routes/authRouter.js";
-import { checkUser } from "./src/middlewares/userMiddleware.js";
+import "./config/passportConfig.js";
+import connectToDatabase from "./config/mongoConfig.js";
+import authRouter from "./routes/authRouter.js";
+import { checkUser } from "./middlewares/userMiddleware.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +24,7 @@ app.use(cookieParser());
 app.use(session({ secret: process.env.COOKIE_SESSION_KEY, resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 
 app.use(checkUser);
 app.use(authRouter);
