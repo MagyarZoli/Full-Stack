@@ -8,15 +8,15 @@ const UsersPage = () => {
   useEffect(() => {
     const loadUsersInfo = async () => {
       try {
-        const response = await axios.get(`/user`, {
-          headers: {Authorization: 'JWT_TOKEN'}
-        });
+        const token = usersInfo && await usersInfo.getIdToken();
+        const headers = token ? { authToken: token } : {};
+        const response = await axios.get(`/user`, { headers });
         setUsersInfo(response.data);
       } catch (error) {
         console.error('Error loading users info:', error);
       }
     };
-    loadUsersInfo();
+    loadUsersInfo().then();
   }, []);
   if (!usersInfo) return <p>Loading...</p>;
   return (

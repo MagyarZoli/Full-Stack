@@ -1,16 +1,21 @@
-// import { useState, useEffect } from "react";
-// import { getAuth, onAuthStateChanged } from "firebase/auth";
-//
-// const useUser = () => {
-//   const [user, setUser] = useState(null);
-//   const [isLoading, setIsLoading] = useState(true);
-//   useEffect(() => {
-//     return onAuthStateChanged(getAuth(), user => {
-//       setUser(user);
-//       setIsLoading(false);
-//     });
-//   }, []);
-//   return { user, isLoading };
-// };
-//
-// export default useUser;
+import { useState, useEffect } from 'react';
+import { useToken } from './useToken';
+
+export const useUser = () => {
+  const [token] = useToken();
+  const getPayloadFromToken = token => {
+    const encodedPayload = token.split('.')[1];
+    return JSON.parse(atob(encodedPayload));
+  };
+  const [user, setUser] = useState(() => {
+    if (!token) return null;
+    return getPayloadFromToken(token);
+  });
+
+  useEffect(() => {
+    if (!token) setUser(null);
+    else setUser(getPayloadFromToken(token));
+  }, [token]);
+
+  return user;
+};
